@@ -27,7 +27,6 @@ app.get('/apps', (req, res) => {
         }
     }
 
-
     //set up filter function on books to include lowercase
       let results = googleapps
         .filter(googleapp =>
@@ -36,8 +35,6 @@ app.get('/apps', (req, res) => {
                 .toLowerCase()
                 .includes(search.toLowerCase())
                 )        
-
-
 
     if(sort) {
         //account for the capitalization in returned data
@@ -51,6 +48,17 @@ app.get('/apps', (req, res) => {
                 
                 return a[sortCap] > b[sortCap] ? 1 : a[sortCap] < b[sortCap] ? -1 : 0;
             })
+    }
+
+    //search is not required but if included it should 
+    //filter the results
+    if(genres) {
+        console.log('genre conditional worked')
+        results = results.filter(result => 
+            result
+            .Genres
+            .toUpperCase()
+            .includes(genres.toUpperCase()))
     }
 
     res
