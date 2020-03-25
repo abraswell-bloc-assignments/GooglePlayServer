@@ -8,13 +8,14 @@ app.use(morgan('common'))
 app.use(cors())
 
 // REQUIRE ARRAY OF Google Apps
-const googleApps = require('./playstore.js')
+const googleapps = require('./playstore.js')
 
 app.get('/apps', (req, res) => {
     // ALL OUR CODE INSIDE HERE...
 
     //set up search param with a default of ''
-    const {search = '', sort} = req.query
+    const {search = '', genres = '', sort} = req.query
+    console.log(genres)
 
     //search is not required but if included it should only
     //be "title" or "rank"
@@ -26,22 +27,32 @@ app.get('/apps', (req, res) => {
         }
     }
 
+
     //set up filter function on books to include lowercase
-    let results = googleApps
-        .filter(googleApp =>
-            googleApp
+      let results = googleapps
+        .filter(googleapp =>
+            googleapp
                 .App // Name of App from data source
                 .toLowerCase()
                 .includes(search.toLowerCase())
-                )
-    //after the books are filtered by search then we can sort
+                )        
+
+
+
     if(sort) {
+        //account for the capitalization in returned data
+        // if sort = "rating" then sortCap = Rating
+        // have to have index [0] to make it work
+        // toLowerCase won't work because data is capitalized...  .Rating
+        let sortCap = sort[0].toUpperCase() + sort.slice(1)
+        // sort results
         results
             .sort((a, b) => {
-                return a[sort] > b[sort] ? 1 : a[sort] < b[sort] ? -1 : 0;
+                
+                return a[sortCap] > b[sortCap] ? 1 : a[sortCap] < b[sortCap] ? -1 : 0;
             })
     }
-    
+
     res
     // CHECK THAT ARRAY IS COMING IN WITH POSTMAN
         // .json(googleApps)
