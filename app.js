@@ -15,7 +15,6 @@ app.get('/apps', (req, res) => {
 
     //set up search param with a default of ''
     const {search = '', genres = '', sort} = req.query
-    console.log(genres)
 
     //search is not required but if included it should only
     //be "title" or "rank"
@@ -52,8 +51,8 @@ app.get('/apps', (req, res) => {
 
     //search is not required but if included it should 
     //filter the results
+    //need to account for UpperCase as data is .Genres, not .genres
     if(genres) {
-        console.log('genre conditional worked')
         results = results.filter(result => 
             result
             .Genres
