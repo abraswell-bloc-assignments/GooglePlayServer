@@ -1,6 +1,8 @@
-const supertest = require('supertest');
+var chai = require("chai"),
+expect = chai.expect; // preference and tested with expect
+chai.use(require("chai-sorted"));
+const supertest = require('supertest')
 const app = require('../app')
-const { expect } = require('chai')
 
 // SUPERTEST CAN ALSO TEST POST / PUT/ & DELETE ENDPOINTS
 // READ THE DOCUMENTATION
@@ -27,14 +29,6 @@ describe('GET /apps', () => {
         })
     })
 
-    //does the program return 400 if sort is not title or rating?
-    it('should be 400 if sort is incorrect', () => {
-        return supertest(app)
-          .get('/apps')
-          .query({ sort: 'MISTAKE' })
-          .expect(400, 'Sort must be one of app or rating');
-      });
-
     // does the program filter by genre?
     it('should filter by genre', () => {
       return supertest(app)
@@ -43,15 +37,24 @@ describe('GET /apps', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .then(res => {
-        expect(res.body[0].genres).to.equal("Card");
+        expect(res.body[0].Genres).to.equal("Card");
+      })
     })
-  })
+
+    //does the program return 400 if sort is not title or rating?
+    it('should be 400 if sort is incorrect', () => {
+        return supertest(app)
+          .get('/apps')
+          .query({ sort: 'MISTAKE' })
+          .expect(400, 'Sort must be one of app or rating')
+      })
 
 
     //we can't automatically check if an array is sorted.
     //instead, we have to iterate the array and check ourselves.
     //keep the test simple, but sometimes you have to add some logic
-    // ------------SORTING WORKS--------------//
+    
+    // does sort by app work?
     it('should sort by app', () => {
         return supertest(app)
           .get('/apps')
@@ -59,10 +62,10 @@ describe('GET /apps', () => {
           .expect(200)
           .expect('Content-Type', /json/)
           .then(res => {
-            expect(res.body).to.be.an('array');
-            let sorted = true;
+            expect(res.body).to.be.an('array')
+            let sorted = true
     
-            let i = 0;
+            let i = 0
             // iterate once less than the length of the array
             // because we're comparing 2 items in the array at a time
             while (i < res.body.length - 1) {
@@ -75,16 +78,36 @@ describe('GET /apps', () => {
                 sorted = false;
                 break; // exit the loop
               }
-              i++;
+              i++
             }
-            expect(sorted).to.be.true;
-          });
-      });
+            expect(sorted).to.be.true
+          })
+      })
 
+      // does sort by rating work?
+      it('should sort by rating', () => {
+        return supertest(app)
+          .get('/apps')
+          .query({ sort: 'rating' })
+          .expect(200)
+          .expect('Content-Type', /json/)
+          .then(res => {
+            expect([res.body[0].Rating, res.body[1].Rating]).to.be.sorted({ascending: true})
+          })
+      })
+
+      // does sort by app work with chai-sort?
+      it('should sort by rating', () => {
+        return supertest(app)
+          .get('/apps')
+          .query({ sort: 'app' })
+          .expect(200)
+          .expect('Content-Type', /json/)
+          .then(res => {
+            expect([res.body[0].App, res.body[1].App]).to.be.sorted({ascending: true})
+          })
+      })
     
-
-      // write sort by rating
-      //write sort by genre
-
   })
+
 

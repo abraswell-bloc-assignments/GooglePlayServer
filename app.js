@@ -67,9 +67,13 @@ app.get('/apps', (req, res) => {
     .json(results)
 })
 
-// app.listen(8000, () => {
-//     console.log('Server started on PORT 8000')
-// })
+//comment out for testing
+//and change package.json file
+// change scripts: start: to "node server" for testing
+// change to scripts: dev: "nodemon server" for testing
+app.listen(8000, () => {
+    console.log('Server started on PORT 8000')
+})
 
 module.exports = app
 
